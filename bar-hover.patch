@@ -1,0 +1,37 @@
+--- a/Bar.qml
++++ b/Bar.qml
+@@ -1007,13 +1007,7 @@
+ 
+   Component.onCompleted: applyBarConfig()
+ 
+-  // The indicator peek opens as the pointer comes onto the bar and holds until
+-  // it leaves, or crosses onto the clock at the start of the center box
+-  // (BarModel.peeksAt). Revealing the indicators widens their section, which
+-  // can slide a widget under a stationary pointer, so nothing narrower than the
+-  // stretch of bar up to that edge, held still while the peek is open
+-  // (BarModel.nextPeekEdge), can hold it without opening and closing it in a
+-  // loop.
++  // Keep the indicator peek open while the pointer is anywhere on the bar.
+   function setBarHovered(hovered) {
+     barHoverCount = Math.max(0, barHoverCount + (hovered ? 1 : -1))
+     if (barHoverCount > 0) {
+@@ -1778,9 +1772,7 @@
+ 
+     // The same thickness the bar publishes for its screen (screenBarSizes).
+     readonly property int thickness: root.thicknessFor(screen)
+-    // Where the center box starts along the bar, set by the drawn center
+-    // sections. Hovering past it, over the clock, its trailing widgets and the
+-    // right section, leaves the indicator peek shut.
++    // Where the center box starts along the bar, set by the drawn center sections.
+     property real peekEdge: 0
+ 
+     // The surface spans its screen at all times, transparent past the strip
+@@ -1846,7 +1838,7 @@
+         // hovered while the pointer is over a widget, where a sibling would lose
+         // hover to the section the pointer entered.
+         HoverHandler {
+-          readonly property bool peeking: hovered && BarModel.peeksAt(point.position, barWindow.peekEdge, root.vertical)
++          readonly property bool peeking: hovered
+           onPeekingChanged: root.setBarHovered(peeking)
+           // Unplugging a monitor destroys its bar without a leave event, which
+           // would strand this surface's tally and hold the peek open for good.
